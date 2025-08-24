@@ -1,10 +1,18 @@
 // Performance.gs
 // Performance monitoring and optimization utilities
 
+/**
+ * Array to store performance log entries
+ * @constant {Array}
+ */
 const PERFORMANCE_LOG = [];
 
 /**
  * Start performance timer
+ * @function startTimer
+ * @param {string} operation - The name of the operation being timed
+ * @returns {Object} Timer object with operation name and start time
+ * @description Creates a timer object to track operation performance
  */
 function startTimer(operation) {
   return {
@@ -15,6 +23,10 @@ function startTimer(operation) {
 
 /**
  * End performance timer and log result
+ * @function endTimer
+ * @param {Object} timer - The timer object from startTimer
+ * @returns {number} Duration in milliseconds
+ * @description Ends a timer and logs the performance data
  */
 function endTimer(timer) {
   const duration = Date.now() - timer.startTime;
@@ -34,6 +46,9 @@ function endTimer(timer) {
 
 /**
  * Get performance statistics
+ * @function getPerformanceStats
+ * @returns {Object} Performance statistics for all tracked operations
+ * @description Calculates and returns performance metrics from the log
  */
 function getPerformanceStats() {
   if (PERFORMANCE_LOG.length === 0) {
@@ -66,6 +81,8 @@ function getPerformanceStats() {
 
 /**
  * Clear performance log
+ * @function clearPerformanceLog
+ * @description Clears all performance log entries
  */
 function clearPerformanceLog() {
   PERFORMANCE_LOG.length = 0;
@@ -73,6 +90,11 @@ function clearPerformanceLog() {
 
 /**
  * Batch operations for better performance
+ * @function batchOperation
+ * @param {Array<Function>} operations - Array of functions to execute
+ * @param {number} batchSize - Number of operations to process at once (default: 10)
+ * @returns {Array} Results from all operations
+ * @description Processes operations in batches to improve performance
  */
 function batchOperation(operations, batchSize = 10) {
   const results = [];
@@ -95,6 +117,11 @@ function batchOperation(operations, batchSize = 10) {
 
 /**
  * Debounce function calls
+ * @function debounce
+ * @param {Function} func - The function to debounce
+ * @param {number} wait - Wait time in milliseconds
+ * @returns {Function} Debounced function
+ * @description Creates a debounced version of a function to prevent excessive calls
  */
 function debounce(func, wait) {
   let timeout;

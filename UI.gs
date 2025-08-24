@@ -1,5 +1,12 @@
 // UI.gs
+// User interface functions for the Data Chain add-on
 
+/**
+ * Creates the Data-Chain menu in Google Docs
+ * @function onOpen
+ * @description Entry point that initializes the add-on menu when document opens
+ * @fires DocumentApp.getUi().createMenu
+ */
 function onOpen() {
   try {
     const ui = DocumentApp.getUi();
@@ -23,6 +30,14 @@ function onOpen() {
   }
 }
 
+/**
+ * Opens a dialog to set the color for inserted values
+ * @function setColor
+ * @description Prompts user for hex color code and validates input
+ * @fires DocumentApp.getUi().prompt
+ * @fires DocumentApp.getUi().alert
+ * @fires PropertiesService.getUserProperties().setProperty
+ */
 function setColor() {
   try {
     const ui = DocumentApp.getUi();
@@ -57,6 +72,12 @@ function setColor() {
   }
 }
 
+/**
+ * Retrieves the current text color setting
+ * @function getColor
+ * @returns {string} Hex color code (defaults to '#000000' if not set)
+ * @description Gets the user's preferred color for inserted values from properties
+ */
 function getColor() {
   try {
     const color = PropertiesService.getUserProperties().getProperty(TEXT_COLOR_KEY);
@@ -67,6 +88,14 @@ function getColor() {
   }
 }
 
+/**
+ * Includes HTML file content for use in templates
+ * @function include
+ * @param {string} filename - The name of the HTML file to include
+ * @returns {string} The HTML content of the file
+ * @description Loads and returns the content of an HTML file for use in templates
+ * @throws {Error} When file cannot be loaded
+ */
 function include(filename) {
   try {
     if (!filename || typeof filename !== 'string') {
@@ -79,6 +108,14 @@ function include(filename) {
   }
 }
 
+/**
+ * Shows the main Data Chain sidebar
+ * @function showSidebar
+ * @description Opens the sidebar interface for inserting values from spreadsheets
+ * @fires HtmlService.createTemplateFromFile
+ * @fires DocumentApp.getUi().showSidebar
+ * @throws {Error} When sidebar template cannot be loaded
+ */
 function showSidebar() {
   try {
     const template = HtmlService.createTemplateFromFile("Sidebar");
@@ -94,6 +131,14 @@ function showSidebar() {
   }
 }
 
+/**
+ * Shows the help documentation sidebar
+ * @function showHelp
+ * @description Opens the help sidebar with usage instructions
+ * @fires HtmlService.createTemplateFromFile
+ * @fires DocumentApp.getUi().showSidebar
+ * @throws {Error} When help template cannot be loaded
+ */
 function showHelp() {
   try {
     const template = HtmlService.createTemplateFromFile("Help");
@@ -109,6 +154,14 @@ function showHelp() {
   }
 }
 
+/**
+ * Shows performance statistics in a dialog
+ * @function showPerformanceStats
+ * @description Displays performance metrics for various operations
+ * @fires getPerformanceStats
+ * @fires DocumentApp.getUi().alert
+ * @throws {Error} When performance stats cannot be retrieved
+ */
 function showPerformanceStats() {
   try {
     const stats = getPerformanceStats();

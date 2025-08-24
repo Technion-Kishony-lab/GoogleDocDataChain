@@ -1,5 +1,13 @@
 // Utils.gs
+// Utility functions for data formatting and manipulation
 
+/**
+ * Formats numbers in scientific notation to display format
+ * @function formatScientificNotation
+ * @param {*} value - The value to format (number, string, etc.)
+ * @returns {string} Formatted string representation
+ * @description Converts scientific notation (e.g., 2.3e7) to display format (2.3·10^7)
+ */
 function formatScientificNotation(value) {
   try {
     if (value === null || value === undefined) {
@@ -30,6 +38,17 @@ function formatScientificNotation(value) {
   }
 }
 
+/**
+ * Inserts text with scientific notation formatting into a document element
+ * @function insertScientificText
+ * @param {DocumentApp.Element} element - The document element to insert text into
+ * @param {string} text - The text to insert
+ * @param {number} start - The starting position for insertion
+ * @param {number} end - The ending position (unused, kept for compatibility)
+ * @returns {number} The length of the inserted text
+ * @description Inserts text and applies superscript formatting for scientific notation
+ * @throws {Error} When element or text parameters are invalid
+ */
 function insertScientificText(element, text, start, end) {
   try {
     if (!element) {
@@ -89,6 +108,13 @@ function insertScientificText(element, text, start, end) {
   }
 }
 
+/**
+ * Extracts spreadsheet ID from a Google Sheets URL
+ * @function extractSheetId
+ * @param {string} url - The Google Sheets URL
+ * @returns {string|null} The spreadsheet ID or null if not found
+ * @description Parses a Google Sheets URL to extract the spreadsheet ID
+ */
 function extractSheetId(url) {
   try {
     if (!url || typeof url !== 'string') {
@@ -103,6 +129,14 @@ function extractSheetId(url) {
   }
 }
 
+/**
+ * Extracts a parameter value from a URL query string
+ * @function getParam
+ * @param {string} url - The URL containing query parameters
+ * @param {string} name - The parameter name to extract
+ * @returns {string|null} The parameter value or null if not found
+ * @description Parses URL query parameters using regex
+ */
 function getParam(url, name) {
   try {
     if (!url || typeof url !== 'string') {
@@ -121,6 +155,14 @@ function getParam(url, name) {
   }
 }
 
+/**
+ * Converts a column number to Excel-style column letter(s)
+ * @function columnToLetter
+ * @param {number} col - The column number (1-based)
+ * @returns {string} The column letter(s) (A, B, C, ..., Z, AA, AB, etc.)
+ * @description Converts numeric column indices to letter-based column references
+ * @throws {Error} When column number is invalid
+ */
 function columnToLetter(col) {
   try {
     if (!col || typeof col !== 'number' || col < 1) {

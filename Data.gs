@@ -1,5 +1,12 @@
 // Data.gs
+// Spreadsheet data operations and management functions
 
+/**
+ * Retrieves the list of recently used spreadsheet IDs
+ * @function getRecentSheets
+ * @returns {Array<string>} Array of spreadsheet IDs
+ * @description Gets the list of recently accessed spreadsheets from user properties
+ */
 function getRecentSheets() {
   try {
     const p = PropertiesService.getUserProperties().getProperty(RECENT_SHEETS_KEY);
@@ -10,6 +17,13 @@ function getRecentSheets() {
   }
 }
 
+/**
+ * Retrieves names and IDs of recently used spreadsheets
+ * @function getRecentSheetNames
+ * @returns {Array<{id: string, name: string}>} Array of objects with sheet ID and name
+ * @description Gets the list of recently accessed spreadsheets with their names
+ * @throws {Error} When spreadsheet access fails
+ */
 function getRecentSheetNames() {
   try {
     const ids = getRecentSheets();
@@ -33,6 +47,12 @@ function getRecentSheetNames() {
   }
 }
 
+/**
+ * Updates the list of recently used spreadsheets
+ * @function updateRecentSheets
+ * @param {string} id - The spreadsheet ID to add to recent list
+ * @description Adds a spreadsheet ID to the beginning of the recent list (max 5 items)
+ */
 function updateRecentSheets(id) {
   try {
     if (!id || typeof id !== 'string') {
@@ -49,6 +69,14 @@ function updateRecentSheets(id) {
   }
 }
 
+/**
+ * Retrieves the list of sheet tabs from a spreadsheet
+ * @function getTabs
+ * @param {string} sheetId - The Google Sheets spreadsheet ID
+ * @returns {Array<string>} Array of sheet tab names
+ * @description Gets all sheet names from a Google Sheets spreadsheet
+ * @throws {Error} When spreadsheet access fails
+ */
 function getTabs(sheetId) {
   try {
     if (!sheetId || typeof sheetId !== 'string') {
@@ -86,6 +114,15 @@ function getTabs(sheetId) {
   }
 }
 
+/**
+ * Retrieves field names from a specific sheet tab
+ * @function getFields
+ * @param {string} sheetId - The Google Sheets spreadsheet ID
+ * @param {string} sheetName - The name of the sheet tab
+ * @returns {Array<string>} Array of field names from column B
+ * @description Gets field names from the second column (B) of a sheet, starting from row 2
+ * @throws {Error} When spreadsheet or sheet access fails
+ */
 function getFields(sheetId, sheetName) {
   try {
     if (!sheetId || typeof sheetId !== 'string') {
@@ -140,6 +177,16 @@ function getFields(sheetId, sheetName) {
   }
 }
 
+/**
+ * Inserts a value from a spreadsheet into the document at cursor position
+ * @function insertFromSidebar
+ * @param {string} sheetId - The Google Sheets spreadsheet ID
+ * @param {string} sheetName - The name of the sheet tab
+ * @param {string} fieldName - The field name to insert
+ * @returns {Object} Result object with success/error status
+ * @description Retrieves a value from a spreadsheet and inserts it as linked text in the document
+ * @throws {Error} When spreadsheet access or document insertion fails
+ */
 function insertFromSidebar(sheetId, sheetName, fieldName) {
   try {
     // Validate inputs
@@ -227,6 +274,13 @@ function insertFromSidebar(sheetId, sheetName, fieldName) {
   }
 }
 
+/**
+ * Clears the list of recently used spreadsheets
+ * @function clearRecentSheets
+ * @description Removes all recently used spreadsheet IDs from user properties and clears cache
+ * @fires clearAllCache
+ * @fires DocumentApp.getUi().alert
+ */
 function clearRecentSheets() {
   try {
     PropertiesService.getUserProperties().deleteProperty(RECENT_SHEETS_KEY);

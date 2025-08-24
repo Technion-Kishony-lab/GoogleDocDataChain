@@ -1,11 +1,24 @@
 // Cache.gs
 // Caching utilities for improved performance
 
+/**
+ * Cache duration in seconds
+ * @constant {number}
+ */
 const CACHE_DURATION = 300; // 5 minutes
+
+/**
+ * Maximum number of cache entries
+ * @constant {number}
+ */
 const MAX_CACHE_SIZE = 100;
 
 /**
  * Get cached data with automatic expiration
+ * @function getCachedData
+ * @param {string} key - The cache key
+ * @returns {*} The cached value or null if not found/expired
+ * @description Retrieves data from script cache with automatic expiration check
  */
 function getCachedData(key) {
   try {
@@ -27,6 +40,10 @@ function getCachedData(key) {
 
 /**
  * Set cached data with timestamp
+ * @function setCachedData
+ * @param {string} key - The cache key
+ * @param {*} value - The value to cache
+ * @description Stores data in script cache with timestamp for expiration
  */
 function setCachedData(key, value) {
   try {
@@ -44,6 +61,9 @@ function setCachedData(key, value) {
 
 /**
  * Clear specific cache entry
+ * @function clearCachedData
+ * @param {string} key - The cache key to remove
+ * @description Removes a specific entry from the script cache
  */
 function clearCachedData(key) {
   try {
@@ -56,6 +76,8 @@ function clearCachedData(key) {
 
 /**
  * Clear all cache
+ * @function clearAllCache
+ * @description Removes all entries from the script cache
  */
 function clearAllCache() {
   try {

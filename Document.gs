@@ -1,5 +1,16 @@
 // Document.gs
+// Document manipulation and placeholder replacement functions
 
+/**
+ * Replaces all placeholders in the document with current spreadsheet data
+ * @function replacePlaceholders
+ * @description Scans the document for linked placeholders and updates them with fresh data
+ * @fires collectRuns
+ * @fires replaceRun
+ * @fires startTimer
+ * @fires endTimer
+ * @throws {Error} When document operations fail
+ */
 function replacePlaceholders() {
   const timer = startTimer('replacePlaceholders');
   
@@ -72,6 +83,13 @@ function replacePlaceholders() {
   }
 }
 
+/**
+ * Collects all linked text runs from document elements
+ * @function collectRuns
+ * @param {DocumentApp.Element} el - The document element to scan
+ * @param {Map} runsByElement - Map to store runs by text element
+ * @description Recursively scans document elements to find linked text runs
+ */
 function collectRuns(el, runsByElement) {
   try {
     if (!el) {
@@ -122,6 +140,14 @@ function collectRuns(el, runsByElement) {
   }
 }
 
+/**
+ * Replaces a single text run with updated spreadsheet data
+ * @function replaceRun
+ * @param {DocumentApp.Text} txt - The text element containing the run
+ * @param {Object} r - The run object with start, end, and url properties
+ * @param {Object} cache - Cache object for spreadsheet data
+ * @description Replaces placeholder text with current value from spreadsheet
+ */
 function replaceRun(txt, r, cache) {
   try {
     if (!txt || !r || !r.url) {
