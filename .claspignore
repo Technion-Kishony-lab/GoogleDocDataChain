@@ -1,0 +1,17 @@
+# Test files
+test.js
+test_comprehensive.js
+
+# Node modules
+node_modules/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.DS_Store
+
+# README
+README.md

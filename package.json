@@ -1,0 +1,18 @@
+{
+  "name": "doc-sheet-chain",
+  "version": "1.0.0",
+  "description": "Google Apps Script add-on for linking Google Docs with Sheets",
+  "main": "Code.gs",
+  "scripts": {
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "deploy": "clasp deploy",
+    "open": "clasp open"
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.4.2"
+  },
+  "clasp": {
+    "scriptId": "1jbRMrP0gMR_ArUewriHwPdClswnYupp7GhwmmylfJhLzE7-64CyKl5Tt"
+  }
+}
