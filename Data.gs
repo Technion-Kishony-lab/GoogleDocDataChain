@@ -13,15 +13,20 @@ function getRecentSheets() {
 function getRecentSheetNames() {
   try {
     const ids = getRecentSheets();
-    return ids.map(id => {
+    if (!ids || ids.length === 0) return [];
+    
+    // Batch fetch file names to reduce API calls
+    const fileInfos = ids.map(id => {
       try {
-        const name = DriveApp.getFileById(id).getName();
-        return { id, name };
+        const file = DriveApp.getFileById(id);
+        return { id, name: file.getName() };
       } catch (e) {
         console.error(`Failed to get name for sheet ${id}:`, e.message);
         return { id, name: id };
       }
     });
+    
+    return fileInfos;
   } catch (error) {
     console.error('Failed to get recent sheet names:', error.message);
     return [];
@@ -50,13 +55,31 @@ function getTabs(sheetId) {
       throw new Error('Invalid sheet ID provided');
     }
     
+    // Check cache first
+    const cacheKey = `tabs_${sheetId}`;
+    const cachedTabs = getCachedData(cacheKey);
+    if (cachedTabs) {
+      return cachedTabs;
+    }
+    
     const ss = SpreadsheetApp.openById(sheetId);
     if (!ss) {
       throw new Error('Could not open spreadsheet');
     }
     
+    // Get all sheets at once to reduce API calls
     const sheets = ss.getSheets();
-    return sheets.map(sh => sh.getName());
+    const sheetNames = [];
+    
+    // Use a more efficient loop
+    for (let i = 0; i < sheets.length; i++) {
+      sheetNames.push(sheets[i].getName());
+    }
+    
+    // Cache the result
+    setCachedData(cacheKey, sheetNames);
+    
+    return sheetNames;
   } catch (error) {
     console.error(`Failed to get tabs for sheet ${sheetId}:`, error.message);
     throw new Error(`Failed to access spreadsheet: ${error.message}`);
@@ -71,6 +94,13 @@ function getFields(sheetId, sheetName) {
     
     if (!sheetName || typeof sheetName !== 'string') {
       throw new Error('Invalid sheet name provided');
+    }
+    
+    // Check cache first
+    const cacheKey = `fields_${sheetId}_${sheetName}`;
+    const cachedFields = getCachedData(cacheKey);
+    if (cachedFields) {
+      return cachedFields;
     }
     
     const ss = SpreadsheetApp.openById(sheetId);
@@ -88,8 +118,22 @@ function getFields(sheetId, sheetName) {
       return [];
     }
     
+    // Get all values in one API call and process efficiently
     const values = sh.getRange(2, 2, lr - 1, 1).getValues();
-    return values.map(r => r[0].toString());
+    const fields = [];
+    
+    // Use a more efficient loop instead of map
+    for (let i = 0; i < values.length; i++) {
+      const value = values[i][0];
+      if (value !== null && value !== undefined) {
+        fields.push(value.toString());
+      }
+    }
+    
+    // Cache the result
+    setCachedData(cacheKey, fields);
+    
+    return fields;
   } catch (error) {
     console.error(`Failed to get fields for sheet ${sheetId}, tab ${sheetName}:`, error.message);
     throw new Error(`Failed to get fields: ${error.message}`);
@@ -186,8 +230,13 @@ function insertFromSidebar(sheetId, sheetName, fieldName) {
 function clearRecentSheets() {
   try {
     PropertiesService.getUserProperties().deleteProperty(RECENT_SHEETS_KEY);
+    // Also clear cache for better performance
+    clearAllCache();
+    const ui = DocumentApp.getUi();
+    ui.alert('Recent sheets and cache cleared successfully!');
   } catch (error) {
     console.error('Failed to clear recent sheets:', error.message);
-    throw new Error('Failed to clear recent sheets');
+    const ui = DocumentApp.getUi();
+    ui.alert('Failed to clear recent sheets: ' + error.message);
   }
 }

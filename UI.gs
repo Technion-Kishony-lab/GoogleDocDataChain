@@ -1,16 +1,26 @@
 // UI.gs
 
 function onOpen() {
-  DocumentApp.getUi()
-    .createMenu('Data‑Chain')
-    .addItem('Insert value', 'showSidebar')
-    .addItem('Update document', 'replacePlaceholders')
-    .addSeparator()
-    .addItem('Set color', 'setColor')
-    .addItem('Clear recent sheets', 'clearRecentSheets')
-    .addSeparator()
-    .addItem('Help', 'showHelp')
-    .addToUi();
+  try {
+    const ui = DocumentApp.getUi();
+    if (!ui) {
+      console.error('Could not get UI instance');
+      return;
+    }
+    
+    ui.createMenu('Data‑Chain')
+      .addItem('Insert value', 'showSidebar')
+      .addItem('Update document', 'replacePlaceholders')
+      .addSeparator()
+      .addItem('Set color', 'setColor')
+      .addItem('Clear recent sheets', 'clearRecentSheets')
+      .addSeparator()
+      .addItem('Performance stats', 'showPerformanceStats')
+      .addItem('Help', 'showHelp')
+      .addToUi();
+  } catch (error) {
+    console.error('Error in onOpen:', error.message);
+  }
 }
 
 function setColor() {
@@ -96,5 +106,33 @@ function showHelp() {
     console.error('Error showing help:', error.message);
     const ui = DocumentApp.getUi();
     ui.alert(`Failed to open help: ${error.message}`);
+  }
+}
+
+function showPerformanceStats() {
+  try {
+    const stats = getPerformanceStats();
+    const ui = DocumentApp.getUi();
+    
+    if (stats.message) {
+      ui.alert('Performance Stats', stats.message, ui.ButtonSet.OK);
+      return;
+    }
+    
+    let message = 'Performance Statistics:\n\n';
+    Object.keys(stats).forEach(operation => {
+      const stat = stats[operation];
+      message += `${operation}:\n`;
+      message += `  Count: ${stat.count}\n`;
+      message += `  Avg Time: ${Math.round(stat.avgTime)}ms\n`;
+      message += `  Min Time: ${stat.minTime}ms\n`;
+      message += `  Max Time: ${stat.maxTime}ms\n\n`;
+    });
+    
+    ui.alert('Performance Stats', message, ui.ButtonSet.OK);
+  } catch (error) {
+    console.error('Error showing performance stats:', error.message);
+    const ui = DocumentApp.getUi();
+    ui.alert('Failed to show performance stats: ' + error.message);
   }
 }

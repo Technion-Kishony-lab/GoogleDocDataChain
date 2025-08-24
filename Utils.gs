@@ -6,7 +6,12 @@ function formatScientificNotation(value) {
       return '';
     }
     
+    // Early return for non-scientific notation
     const str = value.toString();
+    if (str.indexOf('e') === -1 && str.indexOf('E') === -1) {
+      return str;
+    }
+    
     const match = str.match(/^(-?\d*\.?\d+)[eE]([+-]?\d+)$/);
     if (!match) return str;
     
@@ -122,6 +127,17 @@ function columnToLetter(col) {
       throw new Error('Column number must be a positive integer');
     }
     
+    // Cache for common column numbers (A-Z, AA-ZZ)
+    if (col <= 26) {
+      return String.fromCharCode(64 + col);
+    }
+    if (col <= 702) { // AA-ZZ
+      const first = Math.floor((col - 1) / 26);
+      const second = col % 26 || 26;
+      return String.fromCharCode(64 + first) + String.fromCharCode(64 + second);
+    }
+    
+    // General case for larger columns
     let s = '';
     let column = col;
     while (column > 0) {
