@@ -3,5 +3,33 @@
   "dependencies": {
   },
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/documents",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.metadata.readonly",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.container.ui"
+  ],
+  "urlFetchWhitelist": [
+    "https://docs.google.com/*",
+    "https://sheets.googleapis.com/*"
+  ],
+  "addOns": {
+    "common": {
+      "name": "Data Chain",
+      "logoUrl": "https://www.gstatic.com/images/branding/product/1x/docs_48dp.png",
+      "useLocaleFromApp": true,
+      "homepageTrigger": {
+        "runFunction": "onOpen",
+        "enabled": true
+      }
+    },
+    "docs": {
+      "homepageTrigger": {
+        "runFunction": "onOpen",
+        "enabled": true
+      }
+    }
+  }
 }
