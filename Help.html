@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      padding: 20px;
+      font-family: "Segoe UI", sans-serif;
+      background: #f9fbff;
+      color: #333;
+    }
+    h2 {
+      font-size: 20px;
+      color: #2a72d4;
+      margin-bottom: 12px;
+    }
+    h4 {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #2a72d4;
+    }
+    p {
+      margin: 6px 0 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    ul {
+      margin: 0 0 12px 20px;
+      padding: 0;
+      font-size: 14px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    pre {
+      background-color: #eef3fb;
+      border: 1px solid #ccd8f0;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 9px;
+      font-family: monospace;
+      overflow-x: auto;
+    }
+    code {
+      font-family: monospace;
+      background: #eef3fb;
+      padding: 1px 3px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+  <?!= include("logo") ?>
+  <p><em>Data Chain</em> is an add-on that lets you insert linked values from a Google Sheet into your Google Doc.</p>
+
+  <h4>How to Use</h4>
+  <ul>
+    <li>From the "Data‑Chain" menu, select <strong>Insert value</strong>.</li>
+    <li>Choose a spreadsheet, tab, and field.</li>
+    <li>Click <strong>Insert</strong> to place the value at the cursor.</li>
+    <li>Click <strong>Update document</strong> to refresh all inserted values.</li>
+  </ul>
+
+  <h4>Spreadsheet Structure</h4>
+  <p>The add-on expects field-value pairs in the second and third columns. Your spreadsheet should follow this format:</p>
+  <pre>
+| Description    | Field    | Value |
+|----------------|----------|-------|
+| Number of cats | num_cats | 123   |
+| Number of dogs | num_dogs | 456   |
+  </pre>
+
+  <h4>New Spreadsheet ID</h4>
+  <p>To insert from a new spreadsheet, choose <strong>New</strong> in the <strong>Insert chained value</strong> sidebar, and insert the speadsheet ID.</p>
+  <p>To find the speadsheet ID:</p>
+  <ul>
+    <li>Open your Google Sheet.</li>
+    <li>In the URL, find the ID between <code>/d/</code> and <code>/edit</code>.</li>
+    <li>Paste that ID into the <strong>Spreadsheet ID</strong> box in the sidebar.</li>
+  </ul>
+</body>
+</html>

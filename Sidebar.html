@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      /* reduce top/bottom padding */
+      padding: 10px 20px;
+      font-family: "Segoe UI", sans-serif;
+      background: #f9fbff;
+      color: #333;
+    }
+
+    /* logo container removes inline-image descender space */
+    .logo-container {
+      text-align: center;
+      line-height: 0;
+      margin-bottom: 12px;
+    }
+    .logo-container img {
+      max-width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #2a72d4;
+      margin: 0 0 12px;
+    }
+
+    .field {
+      margin: 8px 0;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+    }
+    select,
+    input[type="text"] {
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 300px;
+      height: 36px;
+      box-sizing: border-box;
+    }
+    .radio-group {
+      display: flex;
+      gap: 24px;
+      font-size: 13px;
+    }
+    .refresh-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .refresh-btn:hover { background-color: rgba(0,0,0,0.1); }
+    .refresh-btn svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
+    .refresh-btn.spinning svg { animation: spin 1s linear infinite; }
+    @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+    .action-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      background-color: #5c9ded;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .action-btn:hover { background-color: #3b82db; }
+    #status { margin-top:10px; font-size:13px; color:#666; display:none; }
+    #buttonGroup { display:flex; align-items:center; gap:8px; }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #5c9ded;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <?!= include("logo") ?>
+  <h2>Insert value</h2>
+  <div class="field">
+    <label>Sheet:</label>
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="radio-group">
+        <label><input type="radio" name="mode" value="recent" checked> Recent</label>
+        <label><input type="radio" name="mode" value="custom"> New</label>
+      </div>
+      <button id="reloadSheetsBtn" class="refresh-btn" title="Reload sheets">
+        <svg viewBox="0 0 24 24">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0114.13-3.36L23 10"/><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="field" id="recentField"><select id="sheetSelect"></select></div>
+  <div class="field" id="customField" style="display:none;"><input type="text" id="otherSheet" placeholder="Paste your sheet ID here..."></div>
+
+<div class="field">
+  <button id="openSheetBtn" class="action-btn" style="background-color:#4CAF50;">Open Spreadsheet</button>
+</div>
+
+
+  <div class="field" id="tabField">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <label for="tabSelect" style="margin:0;">Tab:</label>
+      <button id="reloadTabsBtn" class="refresh-btn" title="Reload tabs">
+        <svg viewBox="0 0 24 24">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0114.13-3.36L23 10"/><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"/>
+        </svg>
+      </button>
+    </div>
+    <select id="tabSelect"></select>
+  </div>
+  <div class="field">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <label for="fieldSelect" style="margin:0;">Field:</label>
+      <button id="reloadFieldsBtn" class="refresh-btn" title="Reload fields">
+        <svg viewBox="0 0 24 24">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0114.13-3.36L23 10"/><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"/>
+        </svg>
+      </button>
+    </div>
+    <select id="fieldSelect"></select>
+  </div>
+
+  <div class="field" id="buttonGroup">
+    <button id="insertBtn" class="action-btn">Insert</button>
+    <span id="insertSpinner" class="spinner" style="display:none;margin-left:8px;"></span>
+  </div>
+  <div id="insertStatus" style="font-size:13px; color:#666; margin-top:4px; height:18px;">&nbsp;</div>
+
+<hr style="margin:16px 0; border:none; border-top:1px solid #ddd;">
+
+<div class="field" id="docActions">
+  <button id="refreshBtn" class="action-btn" title="Re-scan the document and update every placeholder">
+    Update Document
+  </button>
+  <span id="updateSpinner" class="spinner" style="display:none;margin-left:8px;"></span>
+  <span id="updateMsg" style="display:none; font-size:13px; color:#666; margin-left:8px;">Updating document placeholders...</span>
+</div>
+<div id="status" style="font-size:13px; color:#666; margin-top:4px; display:none;">Loading…</div>
+  <script>
+    // Unified spinner and status management
+    function showOperation(buttonId, message = null) {
+      const config = getButtonConfig(buttonId);
+      
+      // Show spinner
+      if (config.spinner) {
+        config.spinner.style.display = 'inline-block';
+      }
+      
+      // Handle refresh button spinning animation
+      if (config.button && config.button.classList.contains('refresh-btn')) {
+        config.button.classList.add('spinning');
+      }
+      
+      // Show status message
+      if (config.status && message) {
+        if (config.status.id === 'insertStatus') {
+          config.status.innerText = message;
+        } else {
+          config.status.innerText = message;
+          config.status.style.display = 'block';
+        }
+      }
+      
+      // Disable UI elements
+      setLoadingState(true);
+    }
+    
+    function hideOperation(buttonId, toastMsg = null) {
+      const config = getButtonConfig(buttonId);
+      
+      // Hide spinner
+      if (config.spinner) {
+        config.spinner.style.display = 'none';
+      }
+      
+      // Stop refresh button spinning
+      if (config.button && config.button.classList.contains('refresh-btn')) {
+        config.button.classList.remove('spinning');
+      }
+      
+      // Clear status message
+      if (config.status) {
+        if (config.status.id === 'insertStatus') {
+          config.status.innerHTML = '&nbsp;';
+        } else {
+          config.status.style.display = 'none';
+        }
+      }
+      
+      // Re-enable UI elements
+      setLoadingState(false);
+      
+      // Show toast if provided
+      if (toastMsg) {
+        google.script.host.toast(toastMsg);
+      }
+    }
+    
+    function getButtonConfig(buttonId) {
+      const button = document.getElementById(buttonId);
+      let spinner = null;
+      let status = null;
+      
+      // Map button IDs to their spinner and status elements
+      switch(buttonId) {
+        case 'reloadSheetsBtn':
+          status = document.getElementById('status');
+          break;
+        case 'reloadTabsBtn':
+        case 'reloadFieldsBtn':
+          status = document.getElementById('insertStatus');
+          break;
+        case 'insertBtn':
+          spinner = document.getElementById('insertSpinner');
+          status = document.getElementById('insertStatus');
+          break;
+        case 'refreshBtn':
+          spinner = document.getElementById('updateSpinner');
+          status = document.getElementById('updateMsg');
+          break;
+      }
+      
+      return { button, spinner, status };
+    }
+    
+    function setLoadingState(isLoading) {
+      document.querySelectorAll('select, input[type="text"], input[type="radio"], button.refresh-btn')
+        .forEach(el => el.disabled = isLoading);
+    }
+    function populateSheets(list) {
+      hideOperation('reloadSheetsBtn');
+      const sel = document.getElementById('sheetSelect'); sel.innerHTML = '';
+      list.forEach(item => sel.add(new Option(item.name, item.id)));
+      loadTabs();
+    }
+    function populateTabs(tabs) {
+      const tsel = document.getElementById('tabSelect'); tsel.innerHTML = '';
+      tabs.forEach(name => tsel.add(new Option(name, name)));
+      loadFields();
+    }
+    function toggleMode() {
+      const m = document.querySelector('input[name=mode]:checked').value;
+      document.getElementById('recentField').style.display = m==='recent'?'block':'none';
+      document.getElementById('customField').style.display = m==='custom'?'block':'none';
+      loadTabs();
+    }
+    function loadTabs() {
+      const mode = document.querySelector('input[name=mode]:checked').value;
+      const id = mode==='custom'? document.getElementById('otherSheet').value.trim() : document.getElementById('sheetSelect').value;
+      if (!id) return;
+      showOperation('reloadTabsBtn','Loading tabs…');
+      google.script.run
+        .withSuccessHandler(tabs => { hideOperation('reloadTabsBtn'); populateTabs(tabs); })
+        .withFailureHandler(() => hideOperation('reloadTabsBtn','Error loading tabs'))
+        .getTabs(id);
+    }
+    function loadFields() {
+      const mode = document.querySelector('input[name=mode]:checked').value;
+      const id = mode==='custom'? document.getElementById('otherSheet').value.trim() : document.getElementById('sheetSelect').value;
+      const tab = document.getElementById('tabSelect').value; if (!id||!tab) return;
+      showOperation('reloadFieldsBtn','Loading fields…');
+      google.script.run
+        .withSuccessHandler(headers => {
+          const f = document.getElementById('fieldSelect'); f.innerHTML = '';
+          headers.forEach(h => f.add(new Option(h,h)));
+          hideOperation('reloadFieldsBtn','Fields loaded');
+          hideOperation('reloadTabsBtn');
+        })
+        .withFailureHandler(() => hideOperation('reloadFieldsBtn','Error loading fields'))
+        .getFields(id, tab);
+    }
+    function init(list) {
+      populateSheets(list);
+      document.getElementsByName('mode').forEach(r=>r.addEventListener('change',toggleMode));
+      document.getElementById('otherSheet').addEventListener('input', loadTabs);
+      document.getElementById('sheetSelect').addEventListener('change', loadTabs);
+      document.getElementById('tabSelect').addEventListener('change', loadFields);
+      document.getElementById('reloadSheetsBtn').addEventListener('click', ()=>{
+        showOperation('reloadSheetsBtn','Reloading sheets…');
+        google.script.run.withSuccessHandler(populateSheets)
+          .withFailureHandler(()=>hideOperation('reloadSheetsBtn','Error reloading sheets'))
+          .getRecentSheetNames();
+      });
+      document.getElementById('reloadTabsBtn').addEventListener('click', loadTabs);
+      document.getElementById('reloadFieldsBtn').addEventListener('click', loadFields);
+document.getElementById('openSheetBtn').addEventListener('click', () => {
+  const mode = document.querySelector('input[name=mode]:checked').value;
+  const sheetId = mode === 'custom'
+    ? document.getElementById('otherSheet').value.trim()
+    : document.getElementById('sheetSelect').value;
+  if (sheetId)
+    window.open('https://docs.google.com/spreadsheets/d/' + sheetId, '_blank');
+  else
+    alert('No spreadsheet selected.');
+});
+
+      document.getElementById('insertBtn').addEventListener('click', ()=>{
+        showOperation('insertBtn', 'Inserting spreadsheet-linked value...');
+        const mode = document.querySelector('input[name=mode]:checked').value;
+        const sheetId = mode==='custom'
+          ? document.getElementById('otherSheet').value.trim()
+          : document.getElementById('sheetSelect').value;
+        const sheetName = document.getElementById('tabSelect').value;
+        const field = document.getElementById('fieldSelect').value.trim();
+        google.script.run
+          .withSuccessHandler(res => {
+            hideOperation('insertBtn');
+            if (res && res.error) {
+              alert(res.error);
+            } else {
+              google.script.host.toast('Field inserted');
+              google.script.run.withSuccessHandler(populateSheets)
+                .getRecentSheetNames();
+            }
+          })
+          .withFailureHandler(err => { 
+            hideOperation('insertBtn');
+            alert('Insert error: ' + err.message); 
+          })
+          .insertFromSidebar(sheetId, sheetName, field);
+      });
+
+      document.getElementById('refreshBtn').addEventListener('click', ()=>{
+        showOperation('refreshBtn', 'Updating document placeholders...');
+        google.script.run
+          .withSuccessHandler(()=>{
+            hideOperation('refreshBtn', 'All refreshed');
+          })
+          .withFailureHandler(()=>{
+            hideOperation('refreshBtn', 'Error refreshing');
+          })
+          .replacePlaceholders();
+      });
+    }
+    document.addEventListener('DOMContentLoaded', ()=>google.script.run.withSuccessHandler(init).getRecentSheetNames());
+  </script>
+</body>
+</html>
