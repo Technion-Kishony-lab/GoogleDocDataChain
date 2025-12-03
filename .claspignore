@@ -1,17 +1,7 @@
-# Test files
-test.js
-test_comprehensive.js
-
-# Node modules
-node_modules/
-
-# Git
-.git/
+node_modules/**
+.git/**
+*.md
+test*.js
+package.json
+package-lock.json
 .gitignore
-
-# IDE
-.idea/
-.DS_Store
-
-# README
-README.md
